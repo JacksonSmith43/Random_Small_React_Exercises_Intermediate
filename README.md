@@ -1,1 +1,1 @@
-# -Random_Small_React_Exercises_Intermediate
+Prompts: https://www.reacterry.com/portal/challenges
