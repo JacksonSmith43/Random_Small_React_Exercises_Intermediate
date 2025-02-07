@@ -1,5 +1,13 @@
 body {
-  text-align: center;
   background-color: gray;
+  font-family: sans-serif;
+
 }
 
+
+.visible {}
+
+.hidden {
+  display: none;
+  
+}
