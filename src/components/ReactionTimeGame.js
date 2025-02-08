@@ -39,26 +39,27 @@ const ReactionTimeGame = () => {
 
     return (
         <ReactionTimeGameContainer
+            className='container-fluid'
             aria-label='Press the green button as fast as it appears on the screen.'>
 
             <h3 tabIndex={0}>Reaction time game:</h3>
 
             <StartButton
                 onClick={handleStartGame}
-                className={`start-button ${showStartButton ? "visible" : "hidden"}`}
+                className={`btn btn-primary start-button ${showStartButton ? "visible" : "hidden"}`}
                 tabIndex={0}>
                 Start Game
             </StartButton>
 
             <RedButton
                 onClick={handleRedButtonClick}
-                className={`red-button ${showRedButton ? "visible" : "hidden"}`}
+                className={`btn btn-danger red-button ${showRedButton ? "visible" : "hidden"}`}
                 aria-label='Red button'>
             </RedButton>
 
             <GreenButton
                 onClick={handleGreenButtonClick}
-                className={`green-button ${showGreenButton ? "visible" : "hidden"}`}
+                className={`btn btn-success green-button ${showGreenButton ? "visible" : "hidden"}`}
                 aria-label='Green button.'>
             </GreenButton>
 
@@ -76,8 +77,25 @@ const ReactionTimeGameContainer = styled.div`
     outline: 0.5rem solid red;
     display: inline-block;
     text-align: center;
-    margin: ${({ theme }) => theme.spacing.small};
-    padding: ${({ theme }) => theme.spacing.small};
+
+    width: ${({ theme }) => theme.cardSize.width.large};
+    height: ${({ theme }) => theme.cardSize.height.large};
+    margin: ${({ theme }) => theme.spacing.medium};
+    padding: ${({ theme }) => theme.spacing.medium};
+
+   /* @media only screen and (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+        background-color: red;
+    }
+
+    @media only screen and (min-width: ${({ theme }) => theme.breakpoints.tablet}) {
+        background-color: green;
+    }
+    @media only screen and (min-width: ${({ theme }) => theme.breakpoints.laptop}) {
+        background-color: orange;
+    }
+    @media only screen and (min-width: ${({ theme }) => theme.breakpoints.desktop}) {
+        background-color: blue;
+    }*/
 
 `
 
@@ -86,19 +104,19 @@ const StartButton = styled.button`
 `
 
 const RedButton = styled.button`
-    background-color: ${({ theme }) => theme.colours.red};
-    width: ${({ theme }) => theme.buttonSize.width};
-    height: ${({ theme }) => theme.buttonSize.height}
+    width: ${({ theme }) => theme.buttonSize.width.small};
+    height: ${({ theme }) => theme.buttonSize.height.small}
 `
 
 const GreenButton = styled.button`
-    background-color: ${({ theme }) => theme.colours.green};
-    width: ${({ theme }) => theme.buttonSize.width};
-    height: ${({ theme }) => theme.buttonSize.height}
+    width: ${({ theme }) => theme.buttonSize.width.small};
+    height: ${({ theme }) => theme.buttonSize.height.small}
 `
 
 const Time = styled.p`
     font-weight: bold;
 `
+
+
 
 export default ReactionTimeGame;

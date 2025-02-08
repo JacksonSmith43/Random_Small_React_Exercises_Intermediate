@@ -8,7 +8,9 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+
       <ReactionTimeGame />
+
     </ThemeProvider>
   );
 }
