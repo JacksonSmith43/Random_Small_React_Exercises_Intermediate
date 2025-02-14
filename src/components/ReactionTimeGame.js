@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components'
+import { useEffect } from 'react';
 
 const ReactionTimeGame = () => {
     const [showRedButton, setShowRedButton] = useState(false);
@@ -7,35 +8,102 @@ const ReactionTimeGame = () => {
     const [showStartButton, setShowStartButton] = useState(true);
     const [showTime, setShowTime] = useState(true);
 
+    const [isRunning, setIsRunning] = useState(false);
+    const [time, setTime] = useState(0);
+
+    const [redButtonPressed, setRedButtonPressed] = useState(false);
+    const [greenButtonPressed, setGreenButtonPressed] = useState(false);
+
+    const message = useRef();
+    const timeoutID = useRef(null);
+
+    const minutes = Math.floor((time % 360000) / 6000);
+    const seconds = Math.floor((time % 6000) / 100);
+    const milliseconds = time % 100;
+
+    useEffect(() => {
+        let intervalId;
+        if (isRunning) {
+            intervalId = setInterval(() => {
+                setTime(prevTime => prevTime + 1);
+            }, 10);
+        }
+        return () => clearInterval(intervalId);
+    }, [isRunning]);
+
+
+    useEffect(() => {
+        if (showRedButton) {
+            setRedButtonPressed(true);
+            setGreenButtonPressed(false);
+
+        } else if (showGreenButton) {
+            setGreenButtonPressed(true);
+            setRedButtonPressed(false);
+        }
+
+    }, [showRedButton, showGreenButton]);
+
+
     function handleStartGame() {
         console.log("Game started.");
         setShowRedButton(true);
+        setShowGreenButton(false);
         setShowStartButton(false);
         setShowTime(false);
+        setTime(0);
+        message.current = "";
 
-        setTimeout(() => {
-            setShowGreenButton(true);
-            setShowRedButton(false);
-        }, 3000)
+        clearTimeout(timeoutID.current);
+
+        timeoutID.current = setTimeout(() => {
+            if (!greenButtonPressed && !redButtonPressed) {
+                setShowRedButton(false);
+                setShowGreenButton(true);
+                setShowStartButton(false);
+                setShowTime(false);
+                setIsRunning(true);
+            }
+        }, 1000);
+
     }
 
     function handleRedButtonClick() {
         console.log("Red button pressed.");
 
-        setShowRedButton(false);
-        setShowGreenButton(false);
-        setShowStartButton(true);
-        setShowTime(true);
+        clearTimeout(timeoutID.current);
+
+        if (redButtonPressed) {
+            setRedButtonPressed(false);
+            setShowRedButton(false);
+            setShowGreenButton(false);
+            setShowStartButton(true);
+            setShowTime(false);
+            setIsRunning(false);
+
+            message.current = "Too early."
+        }
     }
 
     function handleGreenButtonClick() {
+
         console.log("Green button pressed.");
         setShowTime(true);
+        setShowGreenButton(false);
+        setShowRedButton(false);
+        setShowStartButton(true);
+        setIsRunning(false);
+
+        if (greenButtonPressed) {
+            setGreenButtonPressed(false);
+
+            message.current = `Time taken in ms: 
+                                ${minutes.toString().padStart(2, "0")}:
+                                ${seconds.toString().padStart(2, "0")}:
+                                ${milliseconds.toString().padStart(2, "0")}`;
+        }
     }
 
-    function handleTimeElapse() {
-
-    }
 
     return (
         <ReactionTimeGameContainer
@@ -54,7 +122,8 @@ const ReactionTimeGame = () => {
             <RedButton
                 onClick={handleRedButtonClick}
                 className={`btn btn-danger red-button ${showRedButton ? "visible" : "hidden"}`}
-                aria-label='Red button'>
+                aria-label='Red button'
+            >
             </RedButton>
 
             <GreenButton
@@ -66,10 +135,19 @@ const ReactionTimeGame = () => {
             <Time
                 tabIndex={0}
                 className={`time ${showGreenButton ? "visible" : "hidden"}`}>
-                Time taken in ms: ${showTime}
+
+                {minutes.toString().padStart(2, "0")}:
+                {seconds.toString().padStart(2, "0")}:
+                {milliseconds.toString().padStart(2, "0")}
+
             </Time>
 
-        </ReactionTimeGameContainer>
+            <Message tabIndex={0}>
+                {message.current}
+            </Message>
+
+
+        </ReactionTimeGameContainer >
     );
 }
 
@@ -77,9 +155,9 @@ const ReactionTimeGameContainer = styled.div`
     outline: 0.5rem solid red;
     display: inline-block;
     text-align: center;
+    max-width: 50%; 
+    max-height: 30%;
 
-    width: ${({ theme }) => theme.cardSize.width.large};
-    height: ${({ theme }) => theme.cardSize.height.large};
     margin: ${({ theme }) => theme.spacing.medium};
     padding: ${({ theme }) => theme.spacing.medium};
 
@@ -117,6 +195,10 @@ const Time = styled.p`
     font-weight: bold;
 `
 
+const Message = styled.p`
+    font-weight: bold;
+    margin: ${({ theme }) => theme.spacing.medium}
+`
 
 
 export default ReactionTimeGame;
